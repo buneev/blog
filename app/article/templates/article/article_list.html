@@ -2,8 +2,18 @@
 
 {% block content %}
 
-{% for instance in object_list %} <!-- <a href=/products/{{ instance.id }} -->
-    <p>{{ instance.id }} - <a href='{{ instance.get_absolute_url }}'>{{ instance.title }}</a></p>
-{% endfor %} 
+    {% for article in article_list %}
+        <div class="card my-4">
+            <div class="card-header">
+                {{ article.pub_date }}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ article.title }}</h5>
+                <p class="card-text">{{ article.text|truncatewords:30 }}
+                <a href="#" class="">(читать полностью)</a>
+                </p>
+            </div>
+        </div>
+    {% endfor %} 
 
 {% endblock %}

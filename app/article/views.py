@@ -5,7 +5,27 @@ from .forms import ArticleForm
 from .models import Article
 
 
-def article_create_view(request):
+def article_list(request):
+    queryset = Article.objects.all()
+    context = {
+        "article_list": queryset
+    }
+    return render(request, "article/article_list.html", context)
+
+
+def article_detail(request, id):
+    # obj = get_object_or_404(Product, id=id)
+    try:
+        obj = Product.objects.get(id=id)
+    except Product.DoesNotExist:
+        raise Http404
+    context = {
+        "object": obj
+    }
+    return render(request, "products/product_detail.html", context)
+
+
+def article_create(request):
     init_data = {
         'title': "This is my new article"
     }
@@ -22,7 +42,7 @@ def article_create_view(request):
     return render(request, "article/article_create.html", context)
 
 
-def article_update_view(request, id=id):
+def article_update(request, id=id):
     obj = get_object_or_404(Article, id=id)
     form = ArticleForm(request.POST or None, instance=obj)
     if form.is_valid():
@@ -33,28 +53,8 @@ def article_update_view(request, id=id):
     return render(request, "article/article_create.html", context)
 
 
-def article_list_view(request):
-    queryset = Article.objects.all()
-    context = {
-        "object_list": queryset
-    }
-    return render(request, "article/article_list.html", context)
-
-
-def article_detail_view(request, id):
-    # obj = get_object_or_404(Product, id=id)
-    try:
-        obj = Product.objects.get(id=id)
-    except Product.DoesNotExist:
-        raise Http404
-    context = {
-        "object": obj
-    }
-    return render(request, "products/product_detail.html", context)
-
-
 # TODO: Необходим рефакторинг
-def article_delete_view(request, id):
+def article_delete(request, id):
     obj = get_object_or_404(Product, id=id)
     if request.method == "POST":
         obj.delete()

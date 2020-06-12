@@ -3,9 +3,9 @@ from .views import *
 
 app_name = 'article'
 urlpatterns = [
-    path('', article_list_view, name='article-list'),
-    path('create/', article_create_view, name='article-create'),
-    path('<int:id>/', article_detail_view, name='article-detail'),
-    path('<int:id>/update/', article_update_view, name='article-update'),
-    path('<int:id>/delete/', article_delete_view, name='article-delete'),
+    path('', article_list, name='article-list'),
+    path('create/', article_create, name='article-create'),
+    path('<int:id>/', article_detail, name='article-detail'),
+    path('<int:id>/update/', article_update, name='article-update'),
+    path('<int:id>/delete/', article_delete, name='article-delete'),
 ]
