@@ -2,7 +2,9 @@
 
 {% block content %}
 
-    {% for article in article_list %}
+    <h3 class='my-4'> Статьи с тегом "{{tag.title}}": </h3>
+
+    {% for article in tag.article_set.all %}
         <div class="card my-4">
             <div class="card-header">
                 {{ article.pub_date|date:"d E Y, D" }}

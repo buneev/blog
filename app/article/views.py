@@ -2,7 +2,7 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import View
 from .forms import ArticleForm
-from .models import Article
+from .models import Article, Tag
 
 
 def article_list(request):
@@ -14,15 +14,23 @@ def article_list(request):
 
 
 def article_detail(request, id):
-    # obj = get_object_or_404(Product, id=id)
+    # art = get_object_or_404(Product, id=id)
     try:
-        obj = Product.objects.get(id=id)
-    except Product.DoesNotExist:
+        art = Article.objects.get(id=id)
+    except Article.DoesNotExist:
         raise Http404
     context = {
-        "object": obj
+        "art": art
     }
-    return render(request, "products/product_detail.html", context)
+    return render(request, "article/article_detail.html", context)
+
+def tag_detail(request, name):
+    tag = Tag.objects.get(title=name)
+    context = {
+        "tag": tag
+    }
+    return render(request, "article/tag_detail.html", context)
+
 
 
 def article_create(request):
