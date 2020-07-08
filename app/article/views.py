@@ -12,7 +12,6 @@ def article_list(request):
     }
     return render(request, "article/article_list.html", context)
 
-
 def article_detail(request, id):
     # art = get_object_or_404(Product, id=id)
     try:
@@ -31,43 +30,14 @@ def tag_detail(request, name):
     }
     return render(request, "article/tag_detail.html", context)
 
-
-
 def article_create(request):
-    init_data = {
-        'title': "This is my new article"
-    }
+    init_data = {'title': ''}
     if request.method == "POST":
-        form = ArticleForm(request.POST or None)
+        form = ArticleForm(request.POST)
         if form.is_valid():
             form.save()
             # return redirect()
     else:
         form = ArticleForm(initial=init_data)
-    context = {
-        'form': form
-    }
+    context = {'form': form}
     return render(request, "article/article_create.html", context)
-
-
-def article_update(request, id=id):
-    obj = get_object_or_404(Article, id=id)
-    form = ArticleForm(request.POST or None, instance=obj)
-    if form.is_valid():
-        form.save()
-    context = {
-        'form': form
-    }
-    return render(request, "article/article_create.html", context)
-
-
-# TODO: Необходим рефакторинг
-def article_delete(request, id):
-    obj = get_object_or_404(Product, id=id)
-    if request.method == "POST":
-        obj.delete()
-        return redirect('../../')
-    context = {
-        "object": obj
-    }
-    return render(request, "products/product_delete.html", context)

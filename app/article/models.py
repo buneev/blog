@@ -2,10 +2,10 @@ from django.db import models
 from django.urls import reverse
 
 class Article(models.Model):
-    title = models.CharField(max_length=120)
-    text = models.TextField(blank=True, null=True)
+    title = models.CharField(max_length=150)
+    text = models.TextField()
     pub_date = models.DateTimeField()
-    author = models.TextField(blank=True, null=True)
+    author = models.CharField(max_length=80)
     tags = models.ManyToManyField("Tag", blank=True)
 
     def __str__(self):
