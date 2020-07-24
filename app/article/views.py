@@ -1,9 +1,9 @@
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.views.generic import View
 from .forms import ArticleForm
 from .models import Article, Tag
-
+from .tasks import mul_2_numbers
 
 def article_list(request):
     queryset = Article.objects.all()
@@ -13,7 +13,6 @@ def article_list(request):
     return render(request, "article/article_list.html", context)
 
 def article_detail(request, id):
-    # art = get_object_or_404(Product, id=id)
     try:
         art = Article.objects.get(id=id)
     except Article.DoesNotExist:
