@@ -5,7 +5,7 @@ from .models import Article
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
-        fields = ['title','text','pub_date', 'author', 'tags']
+        fields = ['title', 'text', 'pub_date', 'author', 'tags']
         labels = {
             'title': 'Название',
             'text': 'Текст',

@@ -12,7 +12,7 @@ class Article(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("article:article-detail", kwargs={"id": self.id})
+        return reverse("article:article_detail_url", kwargs={"id": self.id})
 
 
 class Tag(models.Model):
