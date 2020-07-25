@@ -2,9 +2,13 @@
 
 {% block content %}
 
-    <form action='.' method='POST'>{% csrf_token %}
-        <h1>Do you want to delete the product "{{ object.title }}"?</h1>
-        <p><input type='submit' value='Yes' />  <a href='../'>Cancel</a></p>
+    <form action=" {% url 'article:article_delete_url' id=article.id %} " method='POST'>
+    {% csrf_token %}
+        <div class="text-center m-3">  
+            <h2 > Хотите удалить статью: "{{ article.title }}" ?</h2>
+            <a class='btn btn-secondary' href= "{% url 'article:article_detail_url' id=article.id %}"> Отмета </a>
+            <button type='submit' name='button' class='btn btn-danger'> Удалить </button>
+        </div>
     </form>
 
 {% endblock %}

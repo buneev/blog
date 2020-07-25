@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import View
 from .forms import ArticleForm
 from .models import Article, Tag
+from django.urls import reverse
 
 
 def article_list(request):
@@ -41,6 +42,15 @@ def article_update(request, id):
         form = ArticleForm(instance=article)
     context = {'form': form, 'article': article}
     return render(request, "article/article_update.html", context)
+
+def article_delete(request, id):
+    article = Article.objects.get(id=id)
+    if request.method == "POST":
+        article.delete()
+        url = reverse('article:article_list_url')
+        return redirect(url)
+    context = {'article': article}
+    return render(request, "article/article_delete.html", context)
 
 def tag_detail(request, name):
     tag = Tag.objects.get(title=name)
