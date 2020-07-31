@@ -1,6 +1,5 @@
-from django.urls import path
+from django.urls import include, path
 from .views import *
-
 
 app_name = 'article'
 urlpatterns = [
@@ -10,4 +9,5 @@ urlpatterns = [
     path('<int:id>/update/', article_update, name='article_update_url'),
     path('<int:id>/delete/', article_delete, name='article_delete_url'),
     path('tag/<str:name>', tag_detail, name='tag_detail_url'),
+    path('api/', include('article.api.urls'))
 ]
