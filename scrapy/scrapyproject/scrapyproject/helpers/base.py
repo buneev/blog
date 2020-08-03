@@ -29,7 +29,7 @@ class BaseSpider(Spider):
         self._part = 0
         self._articles = list()
         self.start_time=datetime.utcnow()
-        self.dest_url = f'{BLOG_URL}/spiders/end_work'
+        self.dest_url = f'{BLOG_URL}/article/api/'
         self.count = 500 # max cnt artile for send to django
         spider.logger.info("Spider opened: %s", spider.name)
 
@@ -47,12 +47,12 @@ class BaseSpider(Spider):
         spider.logger.info(f"Spider '{spider.name}' ends work, request to: {self.dest_url}")
         try:
             file = json.dumps(articles)
-            files = {'job_file': (str(self._part), file)}
+            # files = {'job_file (str(self._part), file)}
             data = {'spider': spider.name}
             data.update({'start_time': self.start_time,
                          'finish_time': datetime.utcnow(),
                          'item_scraped_count': len(articles)})
-            r = requests.post(url=self.dest_url, data=data, files=files)
+            r = requests.post(url=self.dest_url, data=file)
             if r.status_code == 200:
                 spider.logger.info("Data sent successful")
                 self._items = list()
@@ -61,9 +61,6 @@ class BaseSpider(Spider):
                 spider.logger("Bad response: status_code={}".format(r.status_code))
         except json.JSONDecodeError:
             spider.logger("Error encode items to json")
-        except Exception as err:
-            spider.logger.error(f"Error in parse article: '{err}'")
-
 
 
     def get_art_container(self):

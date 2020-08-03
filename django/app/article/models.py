@@ -7,6 +7,7 @@ class Article(models.Model):
     pub_date = models.DateTimeField()
     author = models.CharField(max_length=80)
     tags = models.ManyToManyField("Tag", blank=True)
+    # !!!
 
     def __str__(self):
         return self.title

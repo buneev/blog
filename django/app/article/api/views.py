@@ -1,37 +1,52 @@
-from rest_framework import generics
-from rest_framework import viewsets
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework import status
 from rest_framework.response import Response
 from ..models import Article
 from .serializers import ArticleSerializer
 
-
-class ArticleListView(generics.ListAPIView):
-# class ArticleListView(viewsets.ModelViewSet):
+class ArticleListView(APIView):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint that allows users viewed list all artiles
     """
-    queryset = Article.objects.all()
-    serializer_class = ArticleSerializer
-    # return Response({"articles": serializer.data})
+    def get(self, request, format=None):
+        queryset = Article.objects.all()
+        serializer = ArticleSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-class ArticleDetailView(generics.RetrieveAPIView):
-    queryset = Article.objects.all()
-    serializer_class = ArticleSerializer
-    # return Response({"articles": serializer.data})
+    def post(self, request, format=None):
+        serializer = ArticleSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# class ArticleView(generics.APIView):
-    # def get(self, request):
-        # articles = Article.objects.all()
-        # the many param informs the serializer that it will be serializing more than a single article.
-        # serializer = ArticleSerializer(articles, many=True)
-        # return Response({"articles": serializer.data})
+class ArticleDetailView(APIView):
+    """
+    API endpoint that allows users retrieve, update or delete an article
+    """
+    def get_object(self, pk):
+        try:
+            return Article.objects.get(pk=pk)
+        except Article.DoesNotExist:
+            raise Http404
 
+    def get(self, request, pk, format=None):
+        article = self.get_object(pk)
+        serializer = ArticleSerializer(article)
+        return Response(serializer.data)
 
-# from rest_framework.response import Response
-# from rest_framework.views import APIView
-# from ..models import Article
+    def put(self, request, pk, format=None):
+        article = self.get_object(pk)
+        serializer = ArticleSerializer(article, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# class ArticleListView(APIView):
-    # def get(self, request):
-        # articles = Article.objects.all()
-        # return Response({"articles": articles})
+    def delete(self, request, pk, format=None):
+        article = self.get_object(pk)
+        article.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        
