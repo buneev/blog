@@ -137,5 +137,20 @@ CELERY_TIMEZONE = 'Europe/Moscow'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DATETIME_INPUT_FORMATS': [
+        '%Y-%m-%d %H:%M:%S',     # '2006-10-25 14:30:59'
+        '%Y-%m-%d %H:%M',        # '2006-10-25 14:30'
+        '%Y-%m-%d',              # '2006-10-25'
+        '%m.%d.%Y %H:%M:%S',     # '10.25.2006 14:30:59'
+        '%m.%d.%Y %H:%M',        # '10.25.2006 14:30'
+        '%m.%d.%Y',              # '10.25.2006'
+        '%m/%d/%Y %H:%M:%S',     # '10/25/2006 14:30:59'
+        '%m/%d/%Y %H:%M',        # '10/25/2006 14:30'
+        '%m/%d/%Y',              # '10/25/2006'
+    ],
 }
+
+# GLOBAL_SETTINGS = {
+#     'MIN_TEXT_LENGHT': 20,
+# }

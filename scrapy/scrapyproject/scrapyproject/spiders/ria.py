@@ -50,11 +50,14 @@ class ParseFunc(BaseSpider):
     
     def get_images(self, article):
         imgs = article.xpath(P_ART_IMG).extract()
-        return {"images": imgs}
+        return {"image": imgs[0]}
 
     def get_date(self, article):
         date = article.xpath(P_ART_DATE).extract_first(default='')
-        return {"date": date}
+        if date:
+            date = date.strip().split()
+            date = '{} {}'.format(date[1], date[0])
+        return {"pub_date": date}
 
 
 class RiaSpider(ParseFunc):
@@ -75,10 +78,10 @@ class RiaSpider(ParseFunc):
             yield Request(url=url, callback=self.parse_article)
 
     def parse_article(self, response):
-        result = self.get_art_container()
+        result = self.get_art_structure()
         first_art_on_page = response.xpath(P_ART_BLOCK).extract_first(default='')
         article = Selector(text=first_art_on_page)
-        result['url'] = response.url
+        result['sourse_link'] = response.url
         try:
             result.update(self.get_code(article))
             result.update(self.get_title(article))

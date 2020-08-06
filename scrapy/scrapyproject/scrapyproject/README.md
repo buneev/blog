@@ -4,5 +4,5 @@ ____
 scrapy crawl ria -o ../data/output.csv
 
 2) Запуск парсинга в отладчике:
-python3 run_debug.py 
+f5 run_debug.py 
 

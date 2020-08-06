@@ -7,6 +7,9 @@ import json
 
 BLOG_URL = 'http://127.0.0.1:8000'
 
+HEADERS = {
+    'Content-Type': 'application/json',
+}
 
 class BaseSpider(Spider):
 
@@ -26,11 +29,8 @@ class BaseSpider(Spider):
         return ext
 
     def spider_opened(self, spider):
-        self._part = 0
         self._articles = list()
-        self.start_time=datetime.utcnow()
         self.dest_url = f'{BLOG_URL}/article/api/'
-        self.count = 500 # max cnt artile for send to django
         spider.logger.info("Spider opened: %s", spider.name)
 
     def spider_closed(self, spider):
@@ -40,38 +40,31 @@ class BaseSpider(Spider):
 
     def item_scraped(self, item, spider):
         self._articles.append(deepcopy(item))
-        if len(self._articles) >= self.count:
-            self._send_file(self._articles, spider)
 
     def _send_file(self, articles=None, spider=None):
         spider.logger.info(f"Spider '{spider.name}' ends work, request to: {self.dest_url}")
         try:
-            file = json.dumps(articles)
-            # files = {'job_file (str(self._part), file)}
-            data = {'spider': spider.name}
-            data.update({'start_time': self.start_time,
-                         'finish_time': datetime.utcnow(),
-                         'item_scraped_count': len(articles)})
-            r = requests.post(url=self.dest_url, data=file)
+            data = json.dumps(articles)
+            r = requests.post(url=self.dest_url, headers=HEADERS, data=data)
             if r.status_code == 200:
                 spider.logger.info("Data sent successful")
-                self._items = list()
-                self._part = self._part + 1
+            elif r.status_code == 201:
+                spider.logger.info(f"Created: status_code={r.status_code}. {r.text}")
             else:
-                spider.logger("Bad response: status_code={}".format(r.status_code))
+                spider.logger.info(f"Bad response: status_code={r.status_code}. {r.text}")
         except json.JSONDecodeError:
-            spider.logger("Error encode items to json")
+            spider.logger.info("Error encode items to json")
 
 
-    def get_art_container(self):
+    def get_art_structure(self):
         result = {
-            "site": "ria.ru",
-            "url": "",
+            "sourse_link": "",
             "code": "",
             "title": "",
             "text": "",
-            "images": [],
-            "date": "",
-            "author": [],
+            "image": "",
+            "pub_date": "",
+            "author": "",
+            "tags": [],
         }
         return result

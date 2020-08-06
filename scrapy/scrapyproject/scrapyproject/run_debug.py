@@ -10,7 +10,7 @@ try:
             'crawl',
             'ria',
             '-o',
-            'out.json',
+            '/data/output.csv',
         ]
     )
 except SystemExit:
