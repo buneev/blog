@@ -4,11 +4,15 @@ from django.views.generic import View
 from .forms import ArticleForm
 from .models import Article, Tag
 from django.urls import reverse
+from django.core.paginator import Paginator
 
 
 def article_list(request):
     queryset = Article.objects.all()
-    context = {"article_list": queryset}
+    paginator = Paginator(queryset, 5)
+    page_numb = request.GET.get('page', 1)
+    page = paginator.get_page(page_numb)
+    context = {"article_list": page}
     return render(request, "article/article_list.html", context)
 
 def article_detail(request, id):

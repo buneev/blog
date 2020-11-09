@@ -18,7 +18,7 @@
             <div class="card-footer text-muted">
                 tags:
                 {% for tag in article.tags.all %}
-                    <a href="{%  url 'article:tag_detail_url' name=tag.title  %}"> {{ tag.title }}</a>, 
+                    <a href="{% url 'article:tag_detail_url' name=tag.title %}"> {{ tag.title }}</a>, 
                 {% endfor %}
             </div>
         </div>

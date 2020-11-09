@@ -4,6 +4,19 @@
     <div class='my-4'>
         <h1>{{ art.title }}</h1>
         <p>{{ art.pub_date }}</p>
+        {% if art.image %}
+            <img src="{{ art.image }}" class="img-fluid mb-4" alt=Image">
+        {% endif %}
         <p>{{ art.text }}</p>
+        {% if art.sourse_link %}
+            <p> Ссылка на источник: <a href="{{ art.sourse_link }}">{{ art.sourse_link }}</a> </p>
+        {% endif %}
+        
+        <div class="card-footer text-muted">
+            tags:
+            {% for tag in art.tags.all %}
+                <a href="{%  url 'art:tag_detail_url' name=tag.title  %}"> {{ tag.title }}</a>, 
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

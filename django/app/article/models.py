@@ -17,9 +17,15 @@ class Article(models.Model):
     def get_absolute_url(self):
         return reverse("article:article_detail_url", kwargs={"id": self.id})
 
+    class Meta:
+        ordering = ['-pub_date']
+
 
 class Tag(models.Model):
     title = models.CharField(max_length=50)
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        ordering = ['title']

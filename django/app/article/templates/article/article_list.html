@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/article.css' %}">
+
 {% block content %}
 
     {% for article in article_list %}
@@ -9,8 +12,15 @@
             </div>
             <div class="card-body">
                 <h5 class="card-title">{{ article.title }}</h5>
-                <p class="card-text">{{ article.text|truncatewords:30 }}
-                <a href=" {% url 'article:article_detail_url' id=article.id %} " class="">(читать полностью)</a>
+                <p class="card-text">
+                    {% if article.image %}
+                        <img src="{{ article.image }}" class="img-fluid mb-4" alt=Image">
+                    {% endif %}
+                    {{ article.text|truncatewords:30 }}
+                    <a href="{% url 'article:article_detail_url' id=article.id %}" class="">(читать полностью)</a>
+                    {% if article.sourse_link %}
+                        <p> Ссылка на источник: <a href="{{ article.sourse_link }}">{{ article.sourse_link }}</a> </p>
+                    {% endif %}
                 </p>
             </div>
             <div class="card-footer text-muted">

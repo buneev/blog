@@ -1,11 +1,11 @@
 from django import forms
-
 from .models import Article
-
+from django.conf.global_settings import DATETIME_INPUT_FORMATS
 class ArticleForm(forms.ModelForm):
+
     class Meta:
         model = Article
-        fields = ('title', 'text', 'pub_date', 'author', 'sourse_link', 'code', 'tags', 'image')
+        fields = ('title', 'text', 'pub_date', 'author', 'sourse_link', 'tags', 'image')
         labels = {
             'title': 'Название',
             'text': 'Текст',
@@ -28,6 +28,8 @@ class ArticleForm(forms.ModelForm):
         self.fields['pub_date'].widget.attrs.update({'class': 'form-control'})
         self.fields['author'].widget.attrs.update({'class': 'form-control'})
         self.fields['tags'].widget.attrs.update({'class': 'form-control'})
+        self.fields['sourse_link'].widget.attrs.update({'class': 'form-control'})
+        self.fields['image'].widget.attrs.update({'class': 'form-control'})
 
     def clean_text(self, *args, **kwargs):
         text = self.cleaned_data.get("text", '')
@@ -36,5 +38,3 @@ class ArticleForm(forms.ModelForm):
         if len(text) < 20:
             raise forms.ValidationError("Текст статьи слишком короткий")
         return text
-
-
