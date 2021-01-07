@@ -49,9 +49,9 @@ class BaseSpider(Spider):
             if r.status_code == 200:
                 spider.logger.info("Data sent successful")
             elif r.status_code == 201:
-                spider.logger.info(f"Created: status_code={r.status_code}. {r.text}")
+                spider.logger.info(f"Created. status_code: {r.status_code}. {r.text}")
             else:
-                spider.logger.info(f"Bad response: status_code={r.status_code}. {r.text}")
+                spider.logger.info(f"Bad response. status_code: {r.status_code}. {r.text}")
         except json.JSONDecodeError:
             spider.logger.info("Error encode items to json")
 

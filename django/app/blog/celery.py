@@ -3,19 +3,10 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 from django.conf import settings
+from .settings import CELERY_BROKER_URL
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blog.settings')
 
-app = Celery('blog')
-app.config_from_object('django.conf:settings')
+app = Celery('blog', broker=CELERY_BROKER_URL)
+app.config_from_object('django.conf:settings', namespace='CELERY') # переменные которые начинаются с CELERY
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
-
-app.conf.beat_schedule = {
-    # Executes every 30 minutes
-    'mul_2_numbers': {
-        'task': 'article.tasks.mul_2_numbers',
-        'schedule': crontab(minute="*/30"),
-        'args': (7, 20),
-    },
-}
-app.conf.timezone = 'UTC'

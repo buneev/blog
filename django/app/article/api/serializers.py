@@ -5,7 +5,6 @@ from ..models import Article
 
 class ArticleSerializer(serializers.ModelSerializer):
     pub_date = serializers.DateTimeField(input_formats=api_settings.DATETIME_INPUT_FORMATS)
-    
     class Meta:
         model = Article
         fields = ('title', 'text', 'pub_date', 'author', 'sourse_link', 'code', 'tags', 'image')

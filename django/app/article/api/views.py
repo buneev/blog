@@ -15,11 +15,16 @@ class ArticleListView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = ArticleSerializer(data=request.data, many=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        saved_articles = 0
+        articles = request.data # выбрать формат json в postman
+        for article in articles:
+            serializer = ArticleSerializer(data=[article], many=True) # data=request.data
+            if serializer.is_valid():
+                serializer.save()
+                saved_articles += 1
+                # return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(f"OK, saved {saved_articles} articles of {len(articles)}", status=status.HTTP_201_CREATED)
 
 class ArticleDetailView(APIView):
     """

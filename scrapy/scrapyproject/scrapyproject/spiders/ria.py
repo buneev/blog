@@ -74,7 +74,7 @@ class RiaSpider(ParseFunc):
 
     def parse(self, response):
         art_urls = self.get_art_urls(response)
-        for url in art_urls[:3]:
+        for url in art_urls:
             yield Request(url=url, callback=self.parse_article)
 
     def parse_article(self, response):
