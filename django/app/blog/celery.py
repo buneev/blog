@@ -10,3 +10,13 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blog.settings')
 app = Celery('blog', broker=CELERY_BROKER_URL)
 app.config_from_object('django.conf:settings', namespace='CELERY') # переменные которые начинаются с CELERY
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+
+
+# periodic tasks
+app.conf.beat_schedule = {
+    'add-every-1-min': {
+        'task': 'article.tasks.add',
+        'schedule': crontab(minute='*/1'),
+        'args': (3, 11)
+    },
+}

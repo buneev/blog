@@ -26,6 +26,17 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.title
-
+        
     class Meta:
         ordering = ['title']
+
+
+class Site(models.Model):
+    name = models.CharField(max_length=200)
+    resourse = models.CharField(max_length=200, default='')
+
+    def __str__(self):
+        return self.name
+        
+    class Meta:
+        ordering = ['name']

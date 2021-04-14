@@ -1,9 +1,9 @@
 import re
 
-def remove_tags(text):
+def remove_tags(text=''):
     return re.sub(r'\<[^>]*\>', '', str(text))
 
-def clear_str(s):
+def clear_str(s=''):
     if isinstance(s, type(None)):
         return ''
     if isinstance(s, str):

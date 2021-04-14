@@ -4,10 +4,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from ..models import Article
 from .serializers import ArticleSerializer
+from django.http import JsonResponse
 
 class ArticleListView(APIView):
     """
-    API endpoint that allows users viewed list all artiles
+    endpoint allows get or put list of artiles
     """
     def get(self, request, format=None):
         queryset = Article.objects.all()
@@ -15,20 +16,29 @@ class ArticleListView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
+        errors = []
         saved_articles = 0
         articles = request.data # выбрать формат json в postman
-        for article in articles:
-            serializer = ArticleSerializer(data=[article], many=True) # data=request.data
-            if serializer.is_valid():
-                serializer.save()
-                saved_articles += 1
-                # return Response(serializer.data, status=status.HTTP_201_CREATED)
-            # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(f"OK, saved {saved_articles} articles of {len(articles)}", status=status.HTTP_201_CREATED)
+        if isinstance(articles, list):
+            for article in articles:
+                serializer = ArticleSerializer(data=article) # можно data=request.data + ,many=True
+                if serializer.is_valid():
+                    serializer.save()
+                    saved_articles += 1
+                    # return Response(serializer.data, status=status.HTTP_201_CREATED)
+                # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    error = serializer.errors
+                    errors.append({'article_code': f"{article['code']}", 'error': error})
+            return JsonResponse({'message': f"saved {saved_articles} articles of {len(articles)}",
+                                 'errors': errors},
+                                  status=status.HTTP_201_CREATED)
+        else:
+            return Response('Articles must be in list', status=status.HTTP_400_BAD_REQUEST)
 
 class ArticleDetailView(APIView):
     """
-    API endpoint that allows users retrieve, update or delete an article
+    endpoint allows get, update or delete an article
     """
     def get_object(self, pk):
         try:
@@ -40,7 +50,7 @@ class ArticleDetailView(APIView):
         article = self.get_object(pk)
         serializer = ArticleSerializer(article)
         return Response(serializer.data)
-
+    
     def put(self, request, pk, format=None):
         article = self.get_object(pk)
         serializer = ArticleSerializer(article, data=request.data)

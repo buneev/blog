@@ -1,6 +1,7 @@
 from django import forms
 from .models import Article
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
+
 class ArticleForm(forms.ModelForm):
 
     class Meta:
@@ -38,3 +39,8 @@ class ArticleForm(forms.ModelForm):
         if len(text) < 20:
             raise forms.ValidationError("Текст статьи слишком короткий")
         return text
+
+
+class RunParseSiteForm(forms.Form):
+    site_name = forms.CharField(max_length=100)
+    

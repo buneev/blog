@@ -1,11 +1,21 @@
-## Запуск Django
-____
+### Запуск Django
+(env) $ python3 manage.py runserver
 
-1) запуск rabbitmq
-ivan@ivan-M5400:~/Git/blog/django/app$ docker-compose start
-или
-docker start [rabbitmq]
+### rabbitmq
+$ docker-compose up
 
-2) запуск celery / celery beat
-(env) ivan@ivan-M5400:~/Git/blog/django/app$ celery -A blog worker --beat --scheduler django --loglevel=info
+### Запуск rabbitmq
+$ docker start rabbitmq
+
+### Запуск celery
+(env) $ celery -A blog worker -l info 
+
+### Запуск celery beat
+(env) $ celery -A blog beat -l info
+
+### Запуск celery & celery-beat
+(env) $ celery -A blog worker --beat --scheduler django --loglevel=info
+
+### Запуск flower
+(env) ~/.../app $ celery flower -A blog --address=127.0.0.1 --port=5555
 

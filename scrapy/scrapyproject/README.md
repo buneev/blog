@@ -6,3 +6,11 @@ scrapy crawl ria -o ../data/output.csv
 2) Запуск парсинга в debug (vscode):
 f5 run_debug.py 
 
+### Реализованно
+____
+
+* Запуск парсинга статей через endpoint
+* Отправка спарсенных статей на web
+
+
+

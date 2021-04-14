@@ -12,6 +12,10 @@ HEADERS = {
 }
 
 class BaseSpider(Spider):
+    dest_url = f'{BLOG_URL}/article/api/'
+
+    def __init__(self):
+        self.articles = list()
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -29,19 +33,17 @@ class BaseSpider(Spider):
         return ext
 
     def spider_opened(self, spider):
-        self._articles = list()
-        self.dest_url = f'{BLOG_URL}/article/api/'
         spider.logger.info("Spider opened: %s", spider.name)
 
     def spider_closed(self, spider):
         spider.logger.info('Spider closed: %s', spider.name)
-        if len(self._articles) > 0:
-            self._send_file(self._articles, spider)
+        if len(self.articles) > 0:
+            self.send_scraped_data(self.articles, spider)
 
     def item_scraped(self, item, spider):
-        self._articles.append(deepcopy(item))
+        self.articles.append(deepcopy(item))
 
-    def _send_file(self, articles=None, spider=None):
+    def send_scraped_data(self, articles=None, spider=None):
         spider.logger.info(f"Spider '{spider.name}' ends work, request to: {self.dest_url}")
         try:
             data = json.dumps(articles)
@@ -54,7 +56,6 @@ class BaseSpider(Spider):
                 spider.logger.info(f"Bad response. status_code: {r.status_code}. {r.text}")
         except json.JSONDecodeError:
             spider.logger.info("Error encode items to json")
-
 
     def get_art_structure(self):
         result = {
