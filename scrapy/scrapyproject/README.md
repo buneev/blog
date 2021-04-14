@@ -1,5 +1,4 @@
-## Запуск scrapy
-____
+### Запуск scrapy
 1) Запуск парсинга:
 scrapy crawl ria -o ../data/output.csv
 
@@ -7,10 +6,6 @@ scrapy crawl ria -o ../data/output.csv
 f5 run_debug.py 
 
 ### Реализованно
-____
 
 * Запуск парсинга статей через endpoint
-* Отправка спарсенных статей на web
-
-
-
+* Отправка спарсенных статей на в приложение Django

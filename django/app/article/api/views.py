@@ -28,13 +28,11 @@ class ArticleListView(APIView):
                     # return Response(serializer.data, status=status.HTTP_201_CREATED)
                 # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    error = serializer.errors
-                    errors.append({'article_code': f"{article['code']}", 'error': error})
-            return JsonResponse({'message': f"saved {saved_articles} articles of {len(articles)}",
-                                 'errors': errors},
+                    errors.append({'article_code': f"{article['code']}", 'error': serializer.errors})
+            return JsonResponse({'message': f"saved {saved_articles} articles of {len(articles)}", 'errors': errors},
                                   status=status.HTTP_201_CREATED)
         else:
-            return Response('Articles must be in list', status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message': 'Articles must be in list'}, status=status.HTTP_400_BAD_REQUEST)
 
 class ArticleDetailView(APIView):
     """
