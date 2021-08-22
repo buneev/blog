@@ -8,5 +8,6 @@ celerybeat-schedule.*
 .env 
 env/ 
 .vscode/* 
+./postgres_data
 
 

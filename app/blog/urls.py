@@ -21,4 +21,5 @@ urlpatterns = [
     path('', article_list),
     path('admin/', admin.site.urls),
     path('article/', include('article.urls')),
+    path('silk/', include('silk.urls')),
 ]

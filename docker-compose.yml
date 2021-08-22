@@ -1,0 +1,80 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:12
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "5"
+    restart: always
+    command: postgres -c 'max_connections=500'
+    environment:
+      POSTGRES_DB: blog
+      POSTGRES_USER: blog_user
+      POSTGRES_PASSWORD: 123456
+      PGDATA: /var/lib/postgresql/data/
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+    - 5432:5432
+
+  web:
+    container_name: web
+    restart: always 
+    build:
+      context: ./django
+      dockerfile: Dockerfile
+    command: ["/bin/sh","-c","/code/run_django.sh"]
+    volumes:
+      - ./django:/code/
+    ports:
+      - 8000:8000
+    # env_file:
+    #  - ./.env
+    depends_on:
+      - postgres
+    environment:
+      POSTGRES_DB: blog
+      POSTGRES_USER: blog_user
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_HOST: postgres
+
+  # celery worker
+  worker:
+    container_name: worker
+    image: ./django
+    command: ["/bin/sh","-c","/code/run_celery.sh"]
+    restart: always
+    environment:
+      POSTGRES_DB: blog
+      POSTGRES_USER: blog_user
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_HOST: postgres
+      BROKER_URL: 
+      PROXY_TOKEN: 
+    depends_on:
+      - rabbitmq
+  
+  # broker
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    command: rabbitmq-server
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672 # here, we can access rabbitmq management plugin
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=123456
+      - RABBITMQ_DEFAULT_VHOST=/  
+
+volumes:
+  postgres_data:
+
+
+
+
+   

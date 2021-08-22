@@ -1,8 +1,31 @@
-## Блог собирающий статьи с разных сайтов
+## Блог содержащий статьи с разных сайтов
 
 ### Описание
+-
 
-### Запуск
+### Запуск локально:
+
+#### Django
+(env) $ python3 manage.py runserver
+
+#### rabbitmq
+$ docker-compose up
+
+#### Запуск rabbitmq
+$ docker start rabbitmq
+
+#### Запуск celery
+(env) $ celery -A blog worker -l info 
+
+#### Запуск celery beat
+(env) $ celery -A blog beat -l info
+
+#### Запуск celery & celery-beat
+(env) $ celery -A blog worker --beat --scheduler django --loglevel=info
+
+#### Запуск flower
+(env) ~/.../app $ celery flower -A blog --address=127.0.0.1 --port=5555
+
 
 ### API
 
@@ -15,12 +38,13 @@
 | article/api/:id | DELETE      | Delete a single article |
 
 ### Реализованно
-* Парсинг статей с главной страницы ria-новости, и отправка спарсенных данных
-на DRF api.
+CRUD операции для работы со статьями. Есть endpoint для получения статей
+(репозиторий MediaParser). 
 
 ### Планируется
-* спарсить прокси и закинуть их в redis
-* отображать / рассылать раз в неделю статьи с 3-5 новостных сайтов,
-по заданным ключевым словам (война, кризис и т.д.)
-
+* запуск парсинга статей (запрос на aiohttp сервер, репозиторий MediaParser)
+* рассылать по расписанию / отображать статьи с новостных сайтов,
+  по заданным ключевым словам (война, кризис и т.д.)
+* настроить nginx, gunicorn, wsgi
+* обернуть web-приложение в docker
 
