@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/article.css' %}">
+
+{% block content %}
+
+    {% for article in article_list %}
+        <div class="card my-4">
+            <div class="card-header">
+                {{ article.pub_date|date:"d E Y, D" }}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ article.title }}</h5>
+                <p class="card-text">
+                    {% if article.image %}
+                        <img src="{{ article.image }}" class="img-fluid mb-4" alt=Image">
+                    {% endif %}
+                    {{ article.text|truncatewords:30 }}
+                    <a href="{% url 'article:article_detail_url' id=article.id %}" class="">(читать полностью)</a>
+                    {% if article.sourse_link %}
+                        <p> Ссылка на источник: <a href="{{ article.sourse_link }}">{{ article.sourse_link }}</a> </p>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="card-footer text-muted">
+                tags:
+                {% for tag in article.tags.all %}
+                    <a href="{%  url 'article:tag_detail_url' name=tag.title  %}"> {{ tag.title }}</a>, 
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %} 
+
+{% endblock %}
