@@ -6,12 +6,12 @@ class ArticleForm(forms.ModelForm):
 
     class Meta:
         model = Article
-        fields = ('title', 'text', 'pub_date', 'author', 'sourse_link', 'tags', 'image')
+        fields = ('title', 'text', 'pub_date', 'authors', 'sourse_link', 'tags', 'image')
         labels = {
             'title': 'Название',
             'text': 'Текст',
             'pub_date': 'Дата публикации',
-            'author': 'Автор',
+            'authors': 'Автор',
             'sourse_link': 'Ссылка первоисточника',
             'tags': 'Теги',
             'image': 'Ссылка на изображение'
@@ -27,7 +27,7 @@ class ArticleForm(forms.ModelForm):
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
         self.fields['text'].widget.attrs.update({'class': 'form-control'})
         self.fields['pub_date'].widget.attrs.update({'class': 'form-control'})
-        self.fields['author'].widget.attrs.update({'class': 'form-control'})
+        self.fields['authors'].widget.attrs.update({'class': 'form-control'})
         self.fields['tags'].widget.attrs.update({'class': 'form-control'})
         self.fields['sourse_link'].widget.attrs.update({'class': 'form-control'})
         self.fields['image'].widget.attrs.update({'class': 'form-control'})

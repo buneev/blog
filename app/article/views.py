@@ -6,6 +6,7 @@ from .models import Article, Tag, Site
 from django.urls import reverse
 from django.core.paginator import Paginator
 from .tasks import hello_world
+from .services import run_parse_site
 
 
 def article_list(request):
@@ -77,15 +78,13 @@ def article_update(request, id):
     context = {'form': form, 'article': article}
     return render(request, "article/article_update.html", context)
 
-# запуск парсинга статей с определенного ресурса
 def article_parse(request):
+    ''' запуск парсинга статей с определенного ресурса '''
     site = Site.objects.all()
     if request.method == "POST":
-        form = RunParseSiteForm(request.POST)
-        if form.is_valid():
-            x = 1
-            # в файле сервисы, реаилзовать запуск парсинга
-            # return redirect('article/')
+        site_name = request.POST.get("site_name")
+        status = run_parse_site(site_name)
+        return redirect('/article/')
     else:
         form = RunParseSiteForm()
     context = {'form': form}

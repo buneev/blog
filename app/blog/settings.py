@@ -11,10 +11,17 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import environ
+
+
+root = environ.Path(__file__) - 3 # get root of the project
+env = environ.Env()
+environ.Env.read_env() # reading .env file
+SITE_ROOT = root()
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -22,11 +29,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '18(*!6t12dez$%ussv_bwa%oz_qnj-f-_@xqs$449d4f(7%zqu'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=False)
+ARTICLE_PARSER_URL = env('ARTICLE_PARSER_URL', default="http://0.0.0.0:5858")
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
