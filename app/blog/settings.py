@@ -29,7 +29,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '18(*!6t12dez$%ussv_bwa%oz_qnj-f-_@xqs$449d4f(7%zqu'
 
-DEBUG = env.bool('DEBUG', default=False)
+DEBUG = env.bool('DEBUG', default=True)
 ARTICLE_PARSER_URL = env('ARTICLE_PARSER_URL', default="http://0.0.0.0:5858")
 
 ALLOWED_HOSTS = []
@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'article',
     'rest_framework',
-    'django_celery_beat',
-    'silk'
+    'django_celery_beat', 
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -54,11 +54,13 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'silk.middleware.SilkyMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if DEBUG:
+    MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE
 
 ROOT_URLCONF = 'blog.urls'
 
@@ -150,17 +152,22 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DATETIME_INPUT_FORMATS': [
         '%Y-%m-%d %H:%M:%S',     # '2006-10-25 14:30:59'
-        '%Y-%m-%d %H:%M',        # '2006-10-25 14:30'
-        '%Y-%m-%d',              # '2006-10-25'
-        '%m.%d.%Y %H:%M:%S',     # '10.25.2006 14:30:59'
-        '%m.%d.%Y %H:%M',        # '10.25.2006 14:30'
-        '%m.%d.%Y',              # '10.25.2006'
-        '%m/%d/%Y %H:%M:%S',     # '10/25/2006 14:30:59'
-        '%m/%d/%Y %H:%M',        # '10/25/2006 14:30'
-        '%m/%d/%Y',              # '10/25/2006'
+        '%Y-%m-%d %H:%M',       
+        '%Y-%m-%d',              
+        '%d.%m.%Y %H:%M:%S',   
+        '%d.%m.%Y %H:%M',       
+        '%d.%m.%Y',             
+        '%d/%m/%Y %H:%M:%S',    
+        '%d/%m/%Y %H:%M',        
+        '%d/%m/%Y',              
     ],
 }
 
 # GLOBAL_SETTINGS = {
 #     'MIN_TEXT_LENGHT': 20,
 # }
+
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]

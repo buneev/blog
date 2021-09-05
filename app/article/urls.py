@@ -1,3 +1,4 @@
+
 from django.urls import include, path
 from .views import *
 
@@ -10,5 +11,5 @@ urlpatterns = [
     path('<int:id>/delete/', article_delete, name='article_delete_url'),
     path('tag/<str:name>', tag_detail, name='tag_detail_url'),
     path('runparse/', article_parse, name='article_parse_url'),
-    path('api/', include('article.api.urls'))
+    path('api/', include('article.api.urls')),
 ]

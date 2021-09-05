@@ -5,7 +5,7 @@
 
 {% block content %}
 
-    {% for article in article_list %}
+    {% for article in page_obj %}
         <div class="card my-4">
             <div class="card-header">
                 {{ article.pub_date|date:"d E Y, D" }}
@@ -23,9 +23,17 @@
                     {% endif %}
                 </p>
             </div>
+
+            <div class="card-footer text-muted">
+                authors:
+                {% for a in article.authors.all %} <!-- !!! . or _ -->
+                    {{ a.name }}
+                {% endfor %}
+            </div>
+
             <div class="card-footer text-muted">
                 tags:
-                {% for tag in article.tags.all %}
+                {% for tag in article.tags.all %} <!-- !!! . or _ -->
                     <a href="{%  url 'article:tag_detail_url' name=tag.title  %}"> {{ tag.title }}</a>, 
                 {% endfor %}
             </div>

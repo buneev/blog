@@ -10,11 +10,11 @@ from .services import run_parse_site
 
 
 def article_list(request):
-    queryset = Article.objects.all()
-    paginator = Paginator(queryset, 5)
+    queryset = Article.objects.all().prefetch_related('tags').prefetch_related('authors')
+    paginator = Paginator(queryset, 15)
     page_numb = request.GET.get('page', 1)
-    page = paginator.get_page(page_numb)
-    context = {"article_list": page}
+    page_obj = paginator.get_page(page_numb)
+    context = {'page_obj': page_obj}
     return render(request, "article/article_list.html", context)
 
 def article_detail(request, id):

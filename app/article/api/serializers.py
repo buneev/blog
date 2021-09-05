@@ -11,17 +11,18 @@ class ArticleSerializer(serializers.ModelSerializer):
         # fields = '__all__'
 
     def validate_text(self, value):
-        """
-        Check that the text not empty
-        """
+        """ Check that the text not empty """
         if len(value) < 20:
             raise serializers.ValidationError("Текст статьи слишком короткий")
         return value
+    
+    def validate_pub_date(self, value):
+        """ Меняем формат даты """
+        # x = value
+        return value
 
     def validate_code(self, value):
-        """
-        Check that the article doesn't exist in database
-        """
+        """ Check that the article doesn't exist in database """
         art = Article.objects.filter(code=value).first()
         if art:
             raise serializers.ValidationError("Статья с данным кодом уже существует")

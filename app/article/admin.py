@@ -8,3 +8,4 @@ class AdminArticle(admin.ModelAdmin):
 admin.site.register(Article, AdminArticle)
 admin.site.register(Tag)
 admin.site.register(Site)
+admin.site.register(Author)

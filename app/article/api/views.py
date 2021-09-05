@@ -8,7 +8,7 @@ from django.http import JsonResponse
 
 class ArticleListView(APIView):
     """
-    endpoint allows get or put list of artiles
+    endpoint allows get or put list of articles
     """
     def get(self, request, format=None):
         queryset = Article.objects.all()
@@ -30,7 +30,7 @@ class ArticleListView(APIView):
                 else:
                     errors.append({'article_code': f"{article['code']}", 'error': serializer.errors})
             return JsonResponse({'message': f"saved {saved_articles} articles of {len(articles)}", 'errors': errors},
-                                  status=status.HTTP_201_CREATED)
+                                status=status.HTTP_201_CREATED)
         else:
             return JsonResponse({'message': 'Articles must be in list'}, status=status.HTTP_400_BAD_REQUEST)
 
