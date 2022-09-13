@@ -14,7 +14,7 @@ django-environ==0.4.5
 django-silk==4.1.0
 django-timezone-field==4.0
 djangorestframework==3.11.2
-flower==0.9.7
+flower==1.2.0
 gprof2dot==2021.2.21
 gunicorn==19.9.0
 humanize==3.3.0
