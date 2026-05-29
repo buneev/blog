@@ -6,7 +6,9 @@ media
 .python-version 
 celerybeat-schedule.* 
 .env 
-env/ 
+env/
+.venv
+venv/
 .vscode/* 
 ./postgres_data
 
