@@ -22,7 +22,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - 5433:5432
 
   rabbitmq:
     container_name: rabbitmq
@@ -38,9 +38,11 @@ services:
       - 5672:5672
       - 15672:15672
     environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: 123456
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
       RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
 
   web:
     container_name: web
@@ -56,13 +58,13 @@ services:
         limits:
           memory: 512M
     ports:
-      - 8000:8000
+      - 8001:8000
     volumes: &app-volumes
       - .:/code/
     env_file: &app-env app/.env
     environment: &app-env-vars
       DATABASE_HOST: postgres
-      CELERY_BROKER_URL: amqp://admin:123456@rabbitmq:5672
+      CELERY_BROKER_URL: amqp://guest:guest@rabbitmq:5672
     depends_on: &app-depends
       - postgres
       - rabbitmq

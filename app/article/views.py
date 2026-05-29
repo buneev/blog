@@ -5,7 +5,6 @@ from .forms import ArticleForm, RunParseSiteForm
 from .models import Article, Tag, Site
 from django.urls import reverse
 from django.core.paginator import Paginator
-from .tasks import hello_world
 from .services import run_parse_site
 
 

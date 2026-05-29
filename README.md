@@ -17,7 +17,7 @@ docker compose build
 docker compose up
 ```
 
-Django будет доступен на `http://0.0.0.0:8000/`, RabbitMQ Management — на `http://localhost:15672/`.
+Django будет доступен на `http://localhost:8001/`, RabbitMQ Management — на `http://localhost:15672/`.
 
 #### 3. Запуск в фоне
 
@@ -53,11 +53,59 @@ docker compose up
 
 | Сервис     | Назначение                          | Порт        |
 |------------|-------------------------------------|-------------|
-| `postgres` | База данных PostgreSQL 12           | 5432        |
+| `postgres` | База данных PostgreSQL 12           | 5433        |
 | `rabbitmq` | Брокер сообщений для Celery         | 5672, 15672 |
-| `web`      | Django + gunicorn                   | 8000        |
+| `web`      | Django + gunicorn                   | 8001        |
 | `worker`   | Celery Worker (обработка задач)     | —           |
 | `beat`     | Celery Beat (планировщик по Cron)   | —           |
+
+#### Сохранение данных (volumes)
+
+**postgres_data** — named volume. При первом `docker compose up` Docker создаёт
+директорию на хосте (`~/.docker/volumes/blog_postgres_data/`) и монтирует её
+внутрь контейнера как `/var/lib/postgresql/data`. Все файлы БД пишутся туда.
+
+Volume живёт независимо от контейнера:
+- `docker compose down` — контейнер удаляется, volume остаётся
+- `docker compose up` — создаётся новый контейнер, подхватывается тот же
+  volume с теми же данными
+
+Посмотреть список volumes:
+```bash
+docker volume ls
+```
+
+Удалить volume (стерёт БД целиком):
+```bash
+docker volume rm blog_postgres_data
+# или
+docker compose down -v
+```
+
+**.:/code/** — bind mount. Твоя папка проекта монтируется напрямую в `/code/`
+контейнера. Любые изменения в файлах на macOS сразу видны внутри контейнера
+(удобно для разработки — не нужно пересобирать образ при каждом изменении кода).
+
+#### Подключение к PostgreSQL в контейнере
+
+Проброшенный порт `5433:5432` — снаружи (macOS) порт 5433, внутри контейнера 5432.
+
+**Снаружи** (через проброшенный порт контейнера):
+```bash
+psql -U blog_user -h 127.0.0.1 -p 5433 -d blog
+```
+Пароль: `123456`
+
+**Снаружи** (через проброшенный порт контейнера):
+```bash
+psql -U blog_user -h 127.0.0.1 -p 5433 -d blog
+```
+
+**Войти в контейнер:**
+```bash
+docker exec -it postgres sh
+psql -U blog_user -d blog
+```
 
 ---
 

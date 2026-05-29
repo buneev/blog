@@ -12,11 +12,18 @@ app.config_from_object('django.conf:settings', namespace='CELERY') # перем�
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
-# periodic tasks
+# Periodic tasks
 app.conf.beat_schedule = {
-    'add-every-1-min': {
-        'task': 'article.tasks.add',
-        'schedule': crontab(minute='*/1'),
-        'args': (3, 11)
+    'article-stats-every-2min': {
+        'task': 'article.tasks.count_articles',
+        'schedule': crontab(minute='*/2'),
+    },
+    'publish-stats-to-rabbit-every-2min': {
+        'task': 'article.tasks.publish_article_stats',
+        'schedule': crontab(minute='*/2'),
+    },
+    'consume-stats-from-rabbit-every-1min': {
+        'task': 'article.tasks.consume_article_stats',
+        'schedule': crontab(minute='*'),
     },
 }
