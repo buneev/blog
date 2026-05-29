@@ -1,6 +1,67 @@
 ## Блог содержащий статьи с разных сайтов
 
-### Запуск локально:
+### Запуск через Docker (рекомендуется)
+
+Поднимает 5 сервисов: PostgreSQL, RabbitMQ, Django (gunicorn), Celery Worker, Celery Beat.
+Один образ собирается и переиспользуется для всех сервисов приложения.
+
+#### 1. Сборка образа
+
+```bash
+docker compose build
+```
+
+#### 2. Запуск всех сервисов
+
+```bash
+docker compose up
+```
+
+Django будет доступен на `http://0.0.0.0:8000/`, RabbitMQ Management — на `http://localhost:15672/`.
+
+#### 3. Запуск в фоне
+
+```bash
+docker compose up -d
+```
+
+#### 4. Просмотр логов
+
+```bash
+docker compose logs -f web       # только Django
+docker compose logs -f worker    # только Celery Worker
+docker compose logs -f beat      # только Celery Beat
+docker compose logs -f           # все сервисы сразу
+```
+
+#### 5. Остановка
+
+```bash
+docker compose stop              # остановить, не удаляя контейнеры
+docker compose down              # остановить и удалить контейнеры
+docker compose down -v           # остановить, удалить контейнеры и volume с БД
+```
+
+#### 6. Сброс данных и перезапуск
+
+```bash
+docker compose down -v
+docker compose up
+```
+
+#### Состав сервисов
+
+| Сервис     | Назначение                          | Порт        |
+|------------|-------------------------------------|-------------|
+| `postgres` | База данных PostgreSQL 12           | 5432        |
+| `rabbitmq` | Брокер сообщений для Celery         | 5672, 15672 |
+| `web`      | Django + gunicorn                   | 8000        |
+| `worker`   | Celery Worker (обработка задач)     | —           |
+| `beat`     | Celery Beat (планировщик по Cron)   | —           |
+
+---
+
+### Запуск локально (без Docker)
 
 #### 1. PostgreSQL 12
 
@@ -24,7 +85,7 @@ createdb -O blog_user blog
 ```bash
 psql -U blog_user -h 127.0.0.1 -p 5432 -d blog
 ```
-Пароль: `123456` (указан в `app/blog/.env`)
+Пароль: `123456` (указан в `app/.env`)
 
 #### 2. Виртуальное окружение
 
@@ -52,33 +113,30 @@ python app/manage.py runserver
 ```
 
 #### 4. RabbitMQ
+
 ```bash
-docker-compose up
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 \
+  -e RABBITMQ_DEFAULT_USER=admin \
+  -e RABBITMQ_DEFAULT_PASS=123456 \
+  rabbitmq:3-management
 ```
 
-#### Запуск rabbitmq
+#### 5. Celery Worker
+
 ```bash
-docker start rabbitmq
+cd app && celery -A blog worker -l info
 ```
 
-#### Запуск celery
+#### 6. Celery Beat
+
 ```bash
-celery -A blog worker -l info
+cd app && celery -A blog beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
 ```
 
-#### Запуск celery beat
-```bash
-celery -A blog beat -l info
-```
+#### 7. Flower (мониторинг Celery)
 
-#### Запуск celery & celery-beat
 ```bash
-celery -A blog worker --beat --scheduler django --loglevel=info
-```
-
-#### Запуск flower
-```bash
-celery flower -A blog --address=127.0.0.1 --port=5555
+cd app && celery flower -A blog --address=127.0.0.1 --port=5555
 ```
 
 
@@ -144,6 +202,5 @@ CRUD операции для работы со статьями. Есть endpoi
 * запуск парсинга статей (запрос на aiohttp сервер, репозиторий MediaParser)
 * рассылать по расписанию / отображать статьи с новостных сайтов,
   по заданным ключевым словам (погода, кризис и т.д.)
-* настроить nginx, gunicorn, wsgi
-* обернуть web-приложение в docker
+* настроить nginx, gunicorn
 

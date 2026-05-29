@@ -143,8 +143,8 @@ STATICFILES_DIRS = [
 TIME_ZONE = 'Europe/Moscow'
 
 # CELERY
-CELERY_BROKER_URL = 'amqp://admin:123456@localhost:5672'
-CELERY_RESULT_BACKENDS = 'amqp://admin:123456@localhost:5672'
+CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='amqp://admin:123456@localhost:5672')
+CELERY_RESULT_BACKENDS = env('CELERY_RESULT_BACKEND', default='amqp://admin:123456@localhost:5672')
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',

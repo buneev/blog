@@ -1,15 +1,19 @@
-version: '3'
+x-logging: &default-logging
+  options:
+    max-size: "10m"
+    max-file: "5"
 
 services:
   postgres:
     container_name: postgres
     image: postgres:12
-    logging:
-      options:
-        max-size: "50m"
-        max-file: "5"
     restart: always
     command: postgres -c 'max_connections=500'
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     environment:
       POSTGRES_DB: blog
       POSTGRES_USER: blog_user
@@ -18,63 +22,80 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-    - 5432:5432
+      - 5432:5432
 
-  web:
-    container_name: web
-    restart: always 
-    build:
-      context: ./django
-      dockerfile: Dockerfile
-    command: ["/bin/sh","-c","/code/run_django.sh"]
-    volumes:
-      - ./django:/code/
-    ports:
-      - 8000:8000
-    # env_file:
-    #  - ./.env
-    depends_on:
-      - postgres
-    environment:
-      POSTGRES_DB: blog
-      POSTGRES_USER: blog_user
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_HOST: postgres
-
-  # celery worker
-  worker:
-    container_name: worker
-    image: ./django
-    command: ["/bin/sh","-c","/code/run_celery.sh"]
-    restart: always
-    environment:
-      POSTGRES_DB: blog
-      POSTGRES_USER: blog_user
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_HOST: postgres
-      BROKER_URL: 
-      PROXY_TOKEN: 
-    depends_on:
-      - rabbitmq
-  
-  # broker
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management
     command: rabbitmq-server
     restart: always
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     ports:
       - 5672:5672
-      - 15672:15672 # here, we can access rabbitmq management plugin
+      - 15672:15672
     environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=123456
-      - RABBITMQ_DEFAULT_VHOST=/  
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: 123456
+      RABBITMQ_DEFAULT_VHOST: /
+
+  web:
+    container_name: web
+    image: blog-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["./run_django.sh"]
+    restart: always
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    ports:
+      - 8000:8000
+    volumes: &app-volumes
+      - .:/code/
+    env_file: &app-env app/.env
+    environment: &app-env-vars
+      DATABASE_HOST: postgres
+      CELERY_BROKER_URL: amqp://admin:123456@rabbitmq:5672
+    depends_on: &app-depends
+      - postgres
+      - rabbitmq
+
+  worker:
+    container_name: worker
+    image: blog-app
+    command: ["./run_celery.sh"]
+    restart: always
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    volumes: *app-volumes
+    env_file: *app-env
+    environment: *app-env-vars
+    depends_on: *app-depends
+
+  beat:
+    container_name: beat
+    image: blog-app
+    command: ["./run_beat.sh"]
+    restart: always
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    volumes: *app-volumes
+    env_file: *app-env
+    environment: *app-env-vars
+    depends_on: *app-depends
 
 volumes:
   postgres_data:
-
-
-
-
-   
