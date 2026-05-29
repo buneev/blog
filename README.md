@@ -82,6 +82,50 @@ celery flower -A blog --address=127.0.0.1 --port=5555
 ```
 
 
+### Начальные данные (data migration)
+
+В проекте есть миграция `app/article/migrations/0004_seed_data.py`, 
+которая наполняет БД стартовыми данными с помощью `RunPython`.
+
+#### Что создаётся
+
+- **Автор:** Алексей Кузнецов
+- **Теги:** Python, Django, Web, Базы данных, DevOps
+- **5 статей:**
+  - Оптимизация SQL-запросов в Django ORM
+  - CI/CD для Django: GitHub Actions + Docker
+  - WebSockets в Django с Channels
+  - PostgreSQL: полезные фишки для разработчика
+  - Тестирование Django-приложений: от юнитов до интеграционных
+
+#### Применение
+
+На чистой БД миграция применяется автоматически при первом запуске:
+```bash
+python app/manage.py migrate
+```
+
+Если база уже была заполнена вручную (через shell) или нужно перезапустить:
+```bash
+python app/manage.py migrate article 0003
+python app/manage.py migrate
+```
+Первая команда откатывает миграцию seed, вторая применяет заново.
+
+#### Проверка
+
+```bash
+python app/manage.py shell -c "from article.models import Article; print(f'{Article.objects.count()} статей')"
+```
+
+#### Добавление своих данных
+
+Чтобы добавить новые стартовые данные, создайте пустую миграцию:
+```bash
+python app/manage.py makemigrations article --empty
+```
+В полученном файле добавьте `migrations.RunPython(forward_func, reverse_func)`, где `forward_func` создаёт данные, а `reverse_func` (опционально) удаляет их.
+
 ### API
 
 | Endpoint        | HTTP Method | Result                  |

@@ -16,7 +16,7 @@ import environ
 
 root = environ.Path(__file__) - 3 # get root of the project
 env = environ.Env()
-environ.Env.read_env() # reading .env file
+environ.Env.read_env(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'))
 SITE_ROOT = root()
 
 
